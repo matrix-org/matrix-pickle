@@ -1,0 +1,15 @@
+[package]
+name = "binencode"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+derive = ["dep:binencode-derive"]
+default = ["derive"]
+
+[dependencies]
+thiserror = "1.0.37"
+binencode-derive = { path = "../binencode-derive", optional = true}
+
+[dev-dependencies]
+proptest = "1.0.0"
