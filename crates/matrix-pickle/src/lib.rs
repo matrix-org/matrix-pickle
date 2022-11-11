@@ -20,12 +20,12 @@
     trivial_numeric_casts,
     unsafe_code,
     unsafe_op_in_unsafe_fn,
-    unused_extern_crates,
     unused_import_braces,
-    unused_qualifications,
-    rust_2018_idioms
+    unused_qualifications
 )]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+
+extern crate self as matrix_pickle;
 
 mod decode;
 mod encode;

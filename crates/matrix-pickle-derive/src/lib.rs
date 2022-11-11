@@ -28,24 +28,21 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 use proc_macro::TokenStream;
-use proc_macro2::{Span, TokenStream as TokenStream2};
+use proc_macro2::TokenStream as TokenStream2;
 use proc_macro_crate::{crate_name, FoundCrate};
 use proc_macro_error::{abort_call_site, proc_macro_error};
-use quote::quote;
+use quote::{format_ident, quote};
 use syn::{
     parse_macro_input, parse_quote, punctuated::Punctuated, token::Comma, Data, DataEnum,
-    DataStruct, DeriveInput, Field, Fields, FieldsNamed, FieldsUnnamed, GenericParam, Ident, Type,
+    DataStruct, DeriveInput, Field, Fields, FieldsNamed, FieldsUnnamed, GenericParam, Type,
 };
 
-fn use_binencode() -> TokenStream2 {
-    let found_crate = crate_name("binencode").ok().unwrap_or(FoundCrate::Itself);
-
-    match found_crate {
-        FoundCrate::Itself => quote! { crate },
-        FoundCrate::Name(name) => {
-            let ident = Ident::new(&name, Span::call_site());
-            quote! { #ident }
-        }
+fn use_matrix_pickle() -> TokenStream2 {
+    if let Ok(FoundCrate::Name(name)) = crate_name("matrix-pickle") {
+        let import = format_ident!("{}", name);
+        quote! { ::#import }
+    } else {
+        quote! { ::matrix_pickle }
     }
 }
 
