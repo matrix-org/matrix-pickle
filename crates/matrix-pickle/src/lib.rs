@@ -34,7 +34,7 @@ mod error;
 const MAX_ARRAY_LENGTH: usize = u16::MAX as usize;
 
 #[cfg(feature = "derive")]
-pub use binencode_derive::*;
+pub use matrix_pickle_derive::*;
 
 pub use decode::*;
 pub use encode::*;

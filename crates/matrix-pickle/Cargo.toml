@@ -1,15 +1,15 @@
 [package]
-name = "binencode"
+name = "matrix-pickle"
 version = "0.1.0"
 edition = "2021"
 
 [features]
-derive = ["dep:binencode-derive"]
+derive = ["dep:matrix-pickle-derive"]
 default = ["derive"]
 
 [dependencies]
 thiserror = "1.0.37"
-binencode-derive = { path = "../binencode-derive", optional = true}
+matrix-pickle-derive = { path = "../matrix-pickle-derive", optional = true}
 
 [dev-dependencies]
 proptest = "1.0.0"

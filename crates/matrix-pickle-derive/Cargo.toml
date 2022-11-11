@@ -1,5 +1,5 @@
 [package]
-name = "binencode-derive"
+name = "matrix-pickle-derive"
 version = "0.1.0"
 edition = "2021"
 

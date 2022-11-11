@@ -55,11 +55,11 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
 
-    let binencode = use_binencode();
+    let matrix_pickle = use_matrix_pickle();
 
     for param in &mut input.generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#binencode::Encode));
+            type_param.bounds.push(parse_quote!(#matrix_pickle::Encode));
         }
     }
 
@@ -74,8 +74,8 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
             let idents = named.iter().map(|f| &f.ident);
 
             quote! {
-                impl #impl_generics #binencode::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #binencode::EncodeError> {
+                impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
+                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
                         #(ret += self.#idents.encode(writer)?;)*
@@ -92,8 +92,8 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
             let i = (0..unnamed.len()).map(syn::Index::from);
 
             quote! {
-                impl #impl_generics #binencode::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #binencode::EncodeError> {
+                impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
+                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
                         #(ret += self.#i.encode(writer)?;)*
@@ -108,8 +108,8 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
             let numbers = 0u8..variants.len().try_into().expect("Only enums with up to 256 elements are supported");
 
             quote! {
-                impl #impl_generics #binencode::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #binencode::EncodeError> {
+                impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
+                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
                         match self {
@@ -153,11 +153,11 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
 
-    let binencode = use_binencode();
+    let matrix_pickle = use_matrix_pickle();
 
     for param in &mut input.generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#binencode::Encode));
+            type_param.bounds.push(parse_quote!(#matrix_pickle::Encode));
         }
     }
 
@@ -175,8 +175,8 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
             let field_types = named.iter().map(|f| &f.ty);
 
             quote! {
-                impl #impl_generics #binencode::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #binencode::DecodeError> {
+                impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
+                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
                         Ok(Self {
                             #(#names: <#field_types>::decode(reader)?),*
                         })
@@ -193,8 +193,8 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
             let field_types = unnamed.iter().map(|f| &f.ty);
 
             quote! {
-                impl #impl_generics #binencode::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #binencode::DecodeError> {
+                impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
+                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
                         Ok(Self (
                             #(<#field_types>::decode(reader)?),*
                         ))
@@ -207,8 +207,8 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
             let numbers = 0u8..variants.len().try_into().expect("Only enums with up to 256 elements are supported");
 
             quote! {
-                impl #impl_generics #binencode::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #binencode::DecodeError> {
+                impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
+                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
                         let variant = u8::decode(reader)?;
 
                         match variant {
@@ -217,7 +217,7 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
                                 Ok(Self::#names(x))
                             }),*
 
-                            _ => Err(#binencode::DecodeError::UnknownEnumVariant(variant))
+                            _ => Err(#matrix_pickle::DecodeError::UnknownEnumVariant(variant))
                         }
                     }
                 }
