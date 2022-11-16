@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![doc = include_str!("../README.md")]
 #![deny(
     clippy::mem_forget,
     clippy::unwrap_used,
     dead_code,
+    missing_docs,
     trivial_casts,
     trivial_numeric_casts,
     unsafe_code,
@@ -46,6 +48,7 @@ fn use_matrix_pickle() -> TokenStream2 {
     }
 }
 
+/// Derive an `Encode` implementation for a struct or enum.
 #[proc_macro_error]
 #[proc_macro_derive(Encode)]
 pub fn derive_encode(input: TokenStream) -> TokenStream {
@@ -144,6 +147,7 @@ fn check_if_boxed(fields: &Punctuated<Field, Comma>) {
     }
 }
 
+/// Derive an `Decode` implementation for a struct or enum.
 #[proc_macro_error]
 #[proc_macro_derive(Decode, attributes(secret))]
 pub fn derive_decode(input: TokenStream) -> TokenStream {

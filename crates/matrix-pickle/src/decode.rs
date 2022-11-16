@@ -16,31 +16,9 @@ use std::io::{Cursor, Read};
 
 use crate::{DecodeError, MAX_ARRAY_LENGTH};
 
-/// A trait for decoding non-secret values out of a libolm-compatible pickle.
-///
-/// This is almost exactly the same as what the [bincode] crate provides with
-/// the following config:
-/// ```rust,compile_fail
-/// let config = bincode::config::standard()
-///     .with_big_endian()
-///     .with_fixed_int_encoding()
-///     .skip_fixed_array_length();
-/// ```
-///
-/// The two major differences are:
-/// * bincode uses u64 to encode slice lengths
-/// * libolm uses u32 to encode slice lengths expect for fallback keys, where an
-///   u8 is used
-///
-/// The following Decode implementations decode primitive types in a libolm
-/// compatible way.
-///
-/// For decoding values which are meant to be secret, make sure to box the array.
-///
-/// [bincode]: https://github.com/bincode-org/bincode/
+/// A trait for decoding values that were encoded using the `matrix-pickle` binary format.
 pub trait Decode {
-    /// Try to read and decode a non-secret value from the given reader which is
-    /// reading from a libolm-compatible pickle.
+    /// Try to read and decode a value from the given reader.
     fn decode(reader: &mut impl Read) -> Result<Self, DecodeError>
     where
         Self: Sized;

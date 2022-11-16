@@ -16,9 +16,12 @@ use std::io::{Cursor, Write};
 
 use crate::{EncodeError, MAX_ARRAY_LENGTH};
 
+/// A trait for encoding values into the `matrix-pickle` binary format.
 pub trait Encode {
+    /// Try to encode and write a value to the given writer.
     fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError>;
 
+    /// Try to encode a value into a new `Vec`.
     fn encode_to_vec(&self) -> Result<Vec<u8>, EncodeError> {
         let buffer = Vec::new();
         let mut cursor = Cursor::new(buffer);
