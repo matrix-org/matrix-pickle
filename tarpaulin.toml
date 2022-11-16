@@ -1,0 +1,7 @@
+[default-config]
+debug = false
+verbose = false
+workspace = true
+exclude = [
+    "matrix-pickle-derive"
+]
