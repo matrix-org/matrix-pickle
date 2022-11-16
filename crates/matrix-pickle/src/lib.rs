@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![doc = include_str!("../../../README.md")]
+#![doc = include_str!("../README.md")]
 #![deny(
     clippy::mem_forget,
     clippy::unwrap_used,
