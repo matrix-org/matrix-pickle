@@ -2,6 +2,10 @@
 name = "matrix-pickle-derive"
 version = "0.1.0"
 edition = "2021"
+description = "Derive support for matrix-pickle"
+repository = "https://github.com/matrix-org/matrix-pickle"
+license = "MIT"
+rust-version = { workspace = true }
 
 [lib]
 proc-macro = true

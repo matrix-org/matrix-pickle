@@ -2,6 +2,10 @@
 name = "matrix-pickle"
 version = "0.1.0"
 edition = "2021"
+description = "A simple binary encoding format used in the Matrix world"
+repository = "https://github.com/matrix-org/matrix-pickle"
+license = "MIT"
+rust-version = { workspace = true }
 
 [features]
 derive = ["dep:matrix-pickle-derive"]
@@ -9,7 +13,7 @@ default = ["derive"]
 
 [dependencies]
 thiserror = "1.0.37"
-matrix-pickle-derive = { path = "../matrix-pickle-derive", optional = true}
+matrix-pickle-derive = { version = "0.1.0", path = "../matrix-pickle-derive", optional = true}
 
 [dev-dependencies]
 anyhow = "1.0.66"
