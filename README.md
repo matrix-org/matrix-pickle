@@ -45,7 +45,7 @@ The table bellow defines how common types are encoded.
 |  `bool`   |    `true`     |           `[01]`           | Converted to an `u8` before encoding             |
 | `[u8; N]` | `[1u8, 2u8]`  |         `[01, 02]`         | Encoded verbatim                                 |
 |   `u32`   |     `16`      |     `[00, 00, 00, 10]`     | Encoded as a byte array in big endian form       |
-|  `usize`  |     `32`      |     `[00, 00, 00, 20]`     | Converted to an `usize` before encoding          |
+|  `usize`  |     `32`      |     `[00, 00, 00, 20]`     | Converted to an `u32` before encoding            |
 |  `&[T]`   | `&[3u8, 4u8]` | `[00, 00, 00, 02, 03, 04]` | The length gets encoded first, then each element |
 
 # Derive support
