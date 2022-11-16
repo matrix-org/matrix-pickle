@@ -72,7 +72,9 @@ impl Encode for Foo {
     fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
         let mut ret = 0;
 
+        // Encode the first struct field.
         ret += self.first.encode(writer)?;
+        // Now encode the second struct field.
         ret += self.second.encode(writer)?;
 
         Ok(ret)
@@ -103,11 +105,15 @@ impl Encode for Bar {
 
         match self {
             Bar::First(value) => {
+                // This is our first variant, encode a 0u8 first.
                 ret += 0u8.encode(writer)?;
+                // Now encode the associated value.
                 ret += value.encode(writer)?;
             },
             Bar::Second(value) => {
+                // This is our second variant, encode a 1u8 first.
                 ret += 1u8.encode(writer)?;
+                // Now encode the associated value.
                 ret += value.encode(writer)?;
             },
         }
