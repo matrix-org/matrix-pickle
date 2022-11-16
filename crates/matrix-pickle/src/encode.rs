@@ -45,7 +45,7 @@ impl<const N: usize> Encode for [u8; N] {
     fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
         writer.write_all(self)?;
 
-        Ok(self.len())
+        Ok(self.len() * 8)
     }
 }
 
