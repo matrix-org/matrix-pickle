@@ -1,3 +1,9 @@
+![Build Status](https://img.shields.io/github/workflow/status/matrix-org/matrix-pickle/CI?style=flat-square)
+[![codecov](https://img.shields.io/codecov/c/github/matrix-org/matrix-pickle/main.svg?style=flat-square)](https://codecov.io/gh/matrix-org/matrix-pickle)
+[![License](https://img.shields.io/badge/License-MIT-yellowgreen.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Docs](https://img.shields.io/crates/v/matrix-pickle?color=blue&label=docs&style=flat-square)](https://docs.rs/matrix-pickle)
+
+
 A simple binary encoding format used in the Matrix world.
 
 The `matrix-pickle` binary encoding format is used in the [libolm] and
