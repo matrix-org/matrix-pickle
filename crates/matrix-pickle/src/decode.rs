@@ -105,3 +105,18 @@ impl<T: Decode> Decode for Vec<T> {
         }
     }
 }
+
+impl<T: Decode> Decode for Option<T> {
+    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
+        let length = usize::decode(reader)?;
+
+        if length == 0 {
+            Ok(None)
+        } else if length == 1 {
+            let element = T::decode(reader)?;
+            Ok(Some(element))
+        } else {
+            Err(DecodeError::ArrayTooBig(length))
+        }
+    }
+}
