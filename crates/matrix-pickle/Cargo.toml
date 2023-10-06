@@ -12,9 +12,9 @@ derive = ["dep:matrix-pickle-derive"]
 default = ["derive"]
 
 [dependencies]
-thiserror = "1.0.37"
+thiserror = "1.0.49"
 matrix-pickle-derive = { version = "0.1.0", path = "../matrix-pickle-derive", optional = true}
 
 [dev-dependencies]
-anyhow = "1.0.66"
-proptest = "1.0.0"
+anyhow = "1.0.75"
+proptest = "1.3.1"
