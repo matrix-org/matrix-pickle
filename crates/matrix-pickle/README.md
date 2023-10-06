@@ -1,4 +1,4 @@
-![Build Status](https://img.shields.io/github/workflow/status/matrix-org/matrix-pickle/CI?style=flat-square)
+![Build Status](https://img.shields.io/github/actions/workflow/status/matrix-org/matrix-pickle/ci.yml?branch=main&style=flat-square)
 [![codecov](https://img.shields.io/codecov/c/github/matrix-org/matrix-pickle/main.svg?style=flat-square)](https://codecov.io/gh/matrix-org/matrix-pickle)
 [![License](https://img.shields.io/badge/License-MIT-yellowgreen.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Docs](https://img.shields.io/crates/v/matrix-pickle?color=blue&label=docs&style=flat-square)](https://docs.rs/matrix-pickle)
