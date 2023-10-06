@@ -132,7 +132,7 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
 fn check_if_boxed(fields: &Punctuated<Field, Comma>) {
     for field in fields {
         for attribute in &field.attrs {
-            if attribute.path.is_ident("secret") {
+            if attribute.path().is_ident("secret") {
                 match &field.ty {
                     Type::Array(_) => abort_call_site!(
                         "Arrays need to be boxed to avoid unintended copies of the secret"
