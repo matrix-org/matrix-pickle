@@ -75,10 +75,10 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
+                    fn encode(&self, buf: &mut impl bytes::buf::BufMut) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
-                        #(ret += self.#idents.encode(writer)?;)*
+                        #(ret += self.#idents.encode(buf)?;)*
 
                         Ok(ret)
                     }
@@ -93,10 +93,10 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
+                    fn encode(&self, buf: &mut impl bytes::buf::BufMut) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
-                        #(ret += self.#i.encode(writer)?;)*
+                        #(ret += self.#i.encode(buf)?;)*
 
                         Ok(ret)
                     }
@@ -109,13 +109,13 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Encode for #name #ty_generics #where_clause {
-                    fn encode(&self, writer: &mut impl std::io::Write) -> Result<usize, #matrix_pickle::EncodeError> {
+                    fn encode(&self, buf: &mut impl bytes::buf::BufMut) -> Result<usize, #matrix_pickle::EncodeError> {
                         let mut ret = 0;
 
                         match self {
                             #(#name::#names(v) => {
-                                ret += #numbers.encode(writer)?;
-                                ret += v.encode(writer)?;
+                                ret += #numbers.encode(buf)?;
+                                ret += v.encode(buf)?;
                             }),*
                         }
 
@@ -177,9 +177,9 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
+                    fn decode(buf: &mut impl bytes::buf::Buf) -> Result<Self, #matrix_pickle::DecodeError> {
                         Ok(Self {
-                            #(#names: <#field_types>::decode(reader)?),*
+                            #(#names: <#field_types>::decode(buf)?),*
                         })
                     }
                 }
@@ -195,9 +195,9 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
+                    fn decode(buf: &mut impl bytes::buf::Buf) -> Result<Self, #matrix_pickle::DecodeError> {
                         Ok(Self (
-                            #(<#field_types>::decode(reader)?),*
+                            #(<#field_types>::decode(buf)?),*
                         ))
                     }
                 }
@@ -209,12 +209,12 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
 
             quote! {
                 impl #impl_generics #matrix_pickle::Decode for #name #ty_generics #where_clause {
-                    fn decode(reader: &mut impl std::io::Read) -> Result<Self, #matrix_pickle::DecodeError> {
-                        let variant = u8::decode(reader)?;
+                    fn decode(buf: &mut impl bytes::buf::Buf) -> Result<Self, #matrix_pickle::DecodeError> {
+                        let variant = u8::decode(buf)?;
 
                         match variant {
                             #(#numbers => {
-                                let x = Decode::decode(reader)?;
+                                let x = Decode::decode(buf)?;
                                 Ok(Self::#names(x))
                             }),*
 

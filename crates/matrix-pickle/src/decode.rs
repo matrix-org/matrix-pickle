@@ -11,57 +11,50 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-use std::io::{Cursor, Read};
-
 use crate::{DecodeError, MAX_ARRAY_LENGTH};
+use alloc::{boxed::Box, vec::Vec};
+use bytes::buf::Buf;
 
 /// A trait for decoding values that were encoded using the `matrix-pickle` binary format.
 pub trait Decode {
     /// Try to read and decode a value from the given reader.
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError>
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError>
     where
         Self: Sized;
 
     /// Try to read and decode a value from the given byte slice.
-    fn decode_from_slice(buffer: &[u8]) -> Result<Self, DecodeError>
+    fn decode_from_slice(buf: &[u8]) -> Result<Self, DecodeError>
     where
         Self: Sized,
     {
-        let mut cursor = Cursor::new(buffer);
-        Self::decode(&mut cursor)
+        let mut b = buf;
+        Self::decode(&mut b)
     }
 }
 
 impl Decode for u8 {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let mut buffer = [0u8; 1];
-
-        reader.read_exact(&mut buffer)?;
-
-        Ok(buffer[0])
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        Ok(buf.get_u8())
     }
 }
 
 impl Decode for bool {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let value = u8::decode(reader)?;
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        let value = u8::decode(buf)?;
 
         Ok(value != 0)
     }
 }
 
 impl Decode for u32 {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let mut buffer = [0u8; 4];
-        reader.read_exact(&mut buffer)?;
-
-        Ok(u32::from_be_bytes(buffer))
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        Ok(buf.get_u32())
     }
 }
 
 impl Decode for usize {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let size = u32::decode(reader)?;
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        let size = u32::decode(buf)?;
 
         size.try_into()
             .map_err(|_| DecodeError::OutsideUsizeRange(size as u64))
@@ -69,38 +62,41 @@ impl Decode for usize {
 }
 
 impl<const N: usize> Decode for [u8; N] {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let mut buffer = [0u8; N];
-        reader.read_exact(&mut buffer)?;
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        let mut dest = [0u8; N];
+        if buf.remaining() < N {
+            return Err(DecodeError::InsufficientData);
+        }
+        buf.copy_to_slice(&mut dest);
 
-        Ok(buffer)
+        Ok(dest)
     }
 }
 
 impl<const N: usize> Decode for Box<[u8; N]> {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let mut buffer = Box::new([0u8; N]);
-        reader.read_exact(buffer.as_mut_slice())?;
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        let mut dest = Box::new([0u8; N]);
+        buf.copy_to_slice(dest.as_mut_slice());
 
-        Ok(buffer)
+        Ok(dest)
     }
 }
 
 impl<T: Decode> Decode for Vec<T> {
-    fn decode(reader: &mut impl Read) -> Result<Self, DecodeError> {
-        let length = usize::decode(reader)?;
+    fn decode(buf: &mut impl Buf) -> Result<Self, DecodeError> {
+        let length = usize::decode(buf)?;
 
         if length > MAX_ARRAY_LENGTH {
             Err(DecodeError::ArrayTooBig(length))
         } else {
-            let mut buffer = Vec::with_capacity(length);
+            let mut dest = Vec::with_capacity(length);
 
             for _ in 0..length {
-                let element = T::decode(reader)?;
-                buffer.push(element);
+                let element = T::decode(buf)?;
+                dest.push(element);
             }
 
-            Ok(buffer)
+            Ok(dest)
         }
     }
 }
