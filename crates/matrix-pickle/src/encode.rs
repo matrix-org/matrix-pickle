@@ -11,73 +11,73 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-use std::io::{Cursor, Write};
-
 use crate::{EncodeError, MAX_ARRAY_LENGTH};
+use alloc::vec::Vec;
+use bytes::{buf::BufMut, BytesMut};
+use core::mem::size_of;
 
 /// A trait for encoding values into the `matrix-pickle` binary format.
 pub trait Encode {
     /// Try to encode and write a value to the given writer.
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError>;
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError>;
 
     /// Try to encode a value into a new `Vec`.
     fn encode_to_vec(&self) -> Result<Vec<u8>, EncodeError> {
-        let buffer = Vec::new();
-        let mut cursor = Cursor::new(buffer);
+        let mut buffer = BytesMut::new();
+        self.encode(&mut buffer)?;
 
-        self.encode(&mut cursor)?;
-
-        Ok(cursor.into_inner())
+        Ok(buffer.into())
     }
 }
 
 impl Encode for u8 {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
-        Ok(writer.write(&[*self])?)
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
+        buf.put_u8(*self);
+        Ok(size_of::<Self>())
     }
 }
 
 impl Encode for bool {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
-        (*self as u8).encode(writer)
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
+        (*self as u8).encode(buf)
     }
 }
 
 impl<const N: usize> Encode for [u8; N] {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
-        writer.write_all(self)?;
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
+        buf.put(&self[..]);
 
-        Ok(self.len() * 8)
+        Ok(size_of::<Self>())
     }
 }
 
 impl Encode for u32 {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
-        let bytes = self.to_be_bytes();
-        bytes.encode(writer)
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
+        buf.put_u32(*self);
+
+        Ok(size_of::<Self>())
     }
 }
 
 impl Encode for usize {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
         let value = u32::try_from(*self).map_err(|_| EncodeError::OutsideU32Range(*self))?;
 
-        value.encode(writer)
+        value.encode(buf)
     }
 }
 
 impl<T: Encode> Encode for [T] {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
+    fn encode(&self, buf: &mut impl BufMut) -> Result<usize, EncodeError> {
         let length = self.len();
 
         if length > MAX_ARRAY_LENGTH {
             Err(EncodeError::ArrayTooBig(length))
         } else {
-            let mut ret = length.encode(writer)?;
+            let mut ret = length.encode(buf)?;
 
             for value in self {
-                ret += value.encode(writer)?;
+                ret += value.encode(buf)?;
             }
 
             Ok(ret)

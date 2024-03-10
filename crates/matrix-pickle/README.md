@@ -66,7 +66,6 @@ The derive support for structs simply encodes each field of a struct in the orde
 they are defined, for example:
 
 ```rust
-use std::io::Write;
 use matrix_pickle::{Encode, EncodeError};
 
 struct Foo {
@@ -75,13 +74,13 @@ struct Foo {
 }
 
 impl Encode for Foo {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
+    fn encode(&self, buf: &mut impl bytes::buf::BufMut) -> Result<usize, EncodeError> {
         let mut ret = 0;
 
         // Encode the first struct field.
-        ret += self.first.encode(writer)?;
+        ret += self.first.encode(buf)?;
         // Now encode the second struct field.
-        ret += self.second.encode(writer)?;
+        ret += self.second.encode(buf)?;
 
         Ok(ret)
     }
@@ -97,7 +96,6 @@ Only enums with variants that contain a single associated data value are
 supported.
 
 ```rust
-use std::io::Write;
 use matrix_pickle::{Encode, EncodeError};
 
 enum Bar {
@@ -106,21 +104,21 @@ enum Bar {
 }
 
 impl Encode for Bar {
-    fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
+    fn encode(&self, buf: &mut impl bytes::buf::BufMut) -> Result<usize, EncodeError> {
         let mut ret = 0;
 
         match self {
             Bar::First(value) => {
                 // This is our first variant, encode a 0u8 first.
-                ret += 0u8.encode(writer)?;
+                ret += 0u8.encode(buf)?;
                 // Now encode the associated value.
-                ret += value.encode(writer)?;
+                ret += value.encode(buf)?;
             },
             Bar::Second(value) => {
                 // This is our second variant, encode a 1u8 first.
-                ret += 1u8.encode(writer)?;
+                ret += 1u8.encode(buf)?;
                 // Now encode the associated value.
-                ret += value.encode(writer)?;
+                ret += value.encode(buf)?;
             },
         }
 

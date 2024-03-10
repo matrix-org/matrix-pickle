@@ -26,6 +26,9 @@
     unused_qualifications
 )]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
+
+extern crate alloc;
 
 extern crate self as matrix_pickle;
 
@@ -44,9 +47,9 @@ pub use error::*;
 
 #[cfg(test)]
 mod test {
-    use proptest::prelude::*;
-
     use super::*;
+    use alloc::{boxed::Box, vec, vec::Vec};
+    use proptest::prelude::*;
 
     macro_rules! encode_cycle {
         ($value:expr => $type:ty) => {

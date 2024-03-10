@@ -12,41 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use thiserror::Error;
-
 /// Error type describing failure modes for libolm pickle decoding.
-#[derive(Debug, Error)]
+#[cfg_attr(feature = "std", derive(thiserror::Error))]
+#[derive(Debug)]
 pub enum DecodeError {
-    /// There was an error while reading from the source of the libolm, usually
-    /// not enough data was provided.
-    #[error(transparent)]
-    IO(#[from] std::io::Error),
+    /// There was not enough data while reading from the source of the libolm.
+    #[cfg_attr(
+        feature = "std",
+        error("The source does not have enough data to fill the destination")
+    )]
+    InsufficientData,
     /// The encoded usize doesn't fit into the usize of the architecture that is
     /// decoding.
-    #[error(
-        "The decoded value {0} does not fit into the usize type of this \
-         architecture"
+    #[cfg_attr(
+        feature = "std",
+        error("The decoded value {0} does not fit into the usize type of this architecture")
     )]
     OutsideUsizeRange(u64),
     /// An array in the pickle has too many elements.
-    #[error("An array has too many elements: {0}")]
+    #[cfg_attr(feature = "std", error("An array has too many elements: {0}"))]
     ArrayTooBig(usize),
     /// TODO
-    #[error("TODO {0}")]
+    #[cfg_attr(feature = "std", error("TODO {0}"))]
     UnknownEnumVariant(u8),
 }
 
 /// Error type describing failure modes for libolm pickle decoding.
-#[derive(Debug, Error)]
+#[cfg_attr(feature = "std", derive(thiserror::Error))]
+#[derive(Debug)]
 pub enum EncodeError {
-    /// There was an error while writing to the buffer.
-    #[error(transparent)]
-    IO(#[from] std::io::Error),
     /// The usize value that should be encoded doesn't fit into the u32 range of
     /// values.
-    #[error("The usize value {0} does not fit into the u32 range of values.")]
+    #[cfg_attr(
+        feature = "std",
+        error("The usize value {0} does not fit into the u32 range of values.")
+    )]
     OutsideU32Range(usize),
     /// An array in the pickle has too many elements.
-    #[error("An array has too many elements: {0}")]
+    #[cfg_attr(feature = "std", error("An array has too many elements: {0}"))]
     ArrayTooBig(usize),
 }
