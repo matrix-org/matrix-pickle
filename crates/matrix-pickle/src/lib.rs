@@ -65,6 +65,16 @@ mod test {
         };
     }
 
+    macro_rules! encode_length_check {
+        ($value:expr) => {
+            let mut buffer = Vec::new();
+            let size = $value
+                .encode(&mut buffer)
+                .expect("We can always encode into to a Vec");
+            assert_eq!(size, buffer.len());
+        };
+    }
+
     #[test]
     fn encode_cycle() {
         encode_cycle!(10u8 => u8);
@@ -73,6 +83,16 @@ mod test {
         encode_cycle!(true => bool);
         encode_cycle!(false => bool);
         encode_cycle!(vec![1, 2, 3, 4] => Vec<u8>);
+    }
+
+    #[test]
+    fn encode_length_check() {
+        encode_length_check!(10u8);
+        encode_length_check!(10u32);
+        encode_length_check!(10usize);
+        encode_length_check!(true);
+        encode_length_check!(false);
+        encode_length_check!([1u32, 2u32, 3u32, 4u32]);
     }
 
     proptest! {

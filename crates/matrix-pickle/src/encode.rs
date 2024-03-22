@@ -18,7 +18,7 @@ use crate::{EncodeError, MAX_ARRAY_LENGTH};
 
 /// A trait for encoding values into the `matrix-pickle` binary format.
 pub trait Encode {
-    /// Try to encode and write a value to the given writer.
+    /// Try to encode and write a value to the given writer, returning how many bytes were written.
     fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError>;
 
     /// Try to encode a value into a new `Vec`.
@@ -48,7 +48,7 @@ impl<const N: usize> Encode for [u8; N] {
     fn encode(&self, writer: &mut impl Write) -> Result<usize, EncodeError> {
         writer.write_all(self)?;
 
-        Ok(self.len() * 8)
+        Ok(N)
     }
 }
 
