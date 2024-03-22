@@ -98,6 +98,23 @@ mod test {
     }
 
     #[test]
+    fn max_array_length() {
+        assert!(matches!(
+            [false; MAX_ARRAY_LENGTH + 1].encode_to_vec(),
+            Err(EncodeError::ArrayTooBig(_))
+        ));
+
+        let mut buffer = Vec::<u8>::new();
+        (MAX_ARRAY_LENGTH + 1)
+            .encode(&mut buffer)
+            .expect("Should encode length");
+        assert!(matches!(
+            Vec::<bool>::decode(&mut &*buffer),
+            Err(DecodeError::ArrayTooBig(_))
+        ));
+    }
+
+    #[test]
     #[cfg(feature = "derive")]
     fn derive() {
         #[derive(Clone, Encode, Decode, PartialEq, Debug)]
