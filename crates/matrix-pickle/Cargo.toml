@@ -1,6 +1,6 @@
 [package]
 name = "matrix-pickle"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "A simple binary encoding format used in the Matrix world"
 repository = "https://github.com/matrix-org/matrix-pickle"
