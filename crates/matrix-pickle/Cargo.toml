@@ -13,7 +13,7 @@ default = ["derive"]
 
 [dependencies]
 thiserror = "1.0.58"
-matrix-pickle-derive = { version = "0.1.1", path = "../matrix-pickle-derive", optional = true}
+matrix-pickle-derive = { version = "0.2.0", path = "../matrix-pickle-derive", optional = true}
 
 [dev-dependencies]
 anyhow = "1.0.81"
