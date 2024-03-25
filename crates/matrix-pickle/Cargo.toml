@@ -1,6 +1,6 @@
 [package]
 name = "matrix-pickle"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "A simple binary encoding format used in the Matrix world"
 repository = "https://github.com/matrix-org/matrix-pickle"
@@ -13,7 +13,7 @@ default = ["derive"]
 
 [dependencies]
 thiserror = "1.0.58"
-matrix-pickle-derive = { version = "0.1.1", path = "../matrix-pickle-derive", optional = true}
+matrix-pickle-derive = { version = "0.2.0", path = "../matrix-pickle-derive", optional = true}
 
 [dev-dependencies]
 anyhow = "1.0.81"

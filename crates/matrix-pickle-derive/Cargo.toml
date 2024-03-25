@@ -1,6 +1,6 @@
 [package]
 name = "matrix-pickle-derive"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "Derive support for matrix-pickle"
 repository = "https://github.com/matrix-org/matrix-pickle"
