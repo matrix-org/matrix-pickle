@@ -32,7 +32,7 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use proc_macro_crate::{crate_name, FoundCrate};
-use proc_macro_error::{abort_call_site, proc_macro_error};
+use proc_macro_error2::{abort_call_site, proc_macro_error};
 use quote::{format_ident, quote};
 use syn::{
     parse_macro_input, parse_quote, punctuated::Punctuated, token::Comma, Data, DataEnum,
