@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2024-09-10
+
+### 🚜 Refactor
+
+- Switch to the `proc-macro-error2` crate as the `proc-macro-error` crate has
+  been marked as unmaintained.
+
+### 🧪 Testing
+
+- Add a test that we properly return an error when an array reaches MAX_ARRAY_LENGTH ([#7](https://github.com/matrix-org/matrix-pickle/pull/7))
+
 ## [0.2.0] - 2024-03-25
 
 ### 🐛 Bug Fixes
