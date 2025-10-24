@@ -4,7 +4,7 @@ version = "0.2.1"
 edition = "2021"
 description = "Derive support for matrix-pickle"
 repository = "https://github.com/matrix-org/matrix-pickle"
-license = "MIT"
+license = "Apache-2.0"
 rust-version = { workspace = true }
 
 [lib]
