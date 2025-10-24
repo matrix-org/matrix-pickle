@@ -75,9 +75,9 @@ jobs:
     strategy:
       matrix:
         target: [
-          { "os": "ubuntu-latest",  "toolchain": "x86_64-unknown-linux-gnu", "name": "Linux GNU" },
-          { "os": "macos-latest",   "toolchain": "aarch64-apple-darwin",     "name": "macOS arm" },
-          { "os": "windows-latest", "toolchain": "x86_64-pc-windows-msvc",   "name": "Windows MSVC" },
+          { "os": "ubuntu-latest",  "name": "Linux GNU" },
+          { "os": "macOS-latest",   "name": "macOS" },
+          { "os": "windows-latest", "name": "Windows MSVC" },
         ]
         channel: [stable, beta, nightly]
 
@@ -88,7 +88,7 @@ jobs:
       - name: Install rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ format('{0}-{1}', matrix.channel, matrix.target.toolchain) }}
+          toolchain: stable
           profile: minimal
           override: true
 
