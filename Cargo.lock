@@ -111,7 +111,7 @@ checksum = "df1d3c3b53da64cf5760482273a98e575c651a67eec7f77df96b5b642de8f039"
 
 [[package]]
 name = "matrix-pickle"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "anyhow",
  "matrix-pickle-derive",
@@ -121,7 +121,7 @@ dependencies = [
 
 [[package]]
 name = "matrix-pickle-derive"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "proc-macro-crate",
  "proc-macro-error2",
