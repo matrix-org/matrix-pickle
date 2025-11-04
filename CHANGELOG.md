@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2025-11-04
+
+### 🐛 Bug Fixes
+
+- Fixed license discrepancies between the source code and the LICENSE file and
+  license definitions in the Cargo.toml file
+
 ## [0.2.1] - 2024-09-10
 
 ### 🚜 Refactor
