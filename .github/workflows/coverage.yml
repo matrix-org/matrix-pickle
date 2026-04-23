@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions: {}
+
 env:
   CARGO_TERM_COLOR: always
 
@@ -13,35 +15,37 @@ jobs:
   code_coverage:
     name: Code Coverage
     runs-on: "ubuntu-latest"
+    permissions:
+      contents: read
+      id-token: write
     if: github.event_name == 'push' || !github.event.pull_request.draft
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
       with:
         ref: ${{ github.event.pull_request.head.sha }}
+        persist-credentials: false
 
     - name: Install Rust
-      uses: actions-rs/toolchain@v1
+      uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
       with:
         toolchain: stable
         profile: minimal
         override: true
 
     - name: Load cache
-      uses: Swatinem/rust-cache@v2
+      uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
 
     - name: Install tarpaulin
-      uses: actions-rs/cargo@v1
+      uses: taiki-e/install-action@a37010ded18ff788be4440302bd6830b1ae50d8b
       with:
-        command: install
-        args: cargo-tarpaulin
+        tool: cargo-tarpaulin
 
     - name: Run tarpaulin
-      uses: actions-rs/cargo@v1
-      with:
-        command: tarpaulin
-        args: --out Xml
+      run: cargo tarpaulin --out Xml
 
-    - name: Upload to codecov.io
-      uses: codecov/codecov-action@v3
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2
+      with:
+        use_oidc: true
