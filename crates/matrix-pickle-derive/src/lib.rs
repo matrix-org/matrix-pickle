@@ -32,7 +32,6 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use proc_macro_crate::{crate_name, FoundCrate};
-use proc_macro_error3::{abort_call_site, proc_macro_error};
 use quote::{format_ident, quote};
 use syn::{
     parse_macro_input, parse_quote, punctuated::Punctuated, token::Comma, Data, DataEnum,
@@ -49,7 +48,6 @@ fn use_matrix_pickle() -> TokenStream2 {
 }
 
 /// Derive an `Encode` implementation for a struct or enum.
-#[proc_macro_error]
 #[proc_macro_derive(Encode)]
 pub fn derive_encode(input: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(input as DeriveInput);
@@ -125,30 +123,43 @@ pub fn derive_encode(input: TokenStream) -> TokenStream {
             }
         }
 
-        _ => abort_call_site!("`#[derive(Encode)` only supports non-tuple structs"),
+        _ => {
+            return syn::Error::new_spanned(
+                name,
+                "`#[derive(Encode)]` only supports structs and enums",
+            )
+            .to_compile_error()
+            .into()
+        }
     }.into()
 }
 
-fn check_if_boxed(fields: &Punctuated<Field, Comma>) {
+fn check_if_boxed(fields: &Punctuated<Field, Comma>) -> syn::Result<()> {
     for field in fields {
         for attribute in &field.attrs {
             if attribute.path().is_ident("secret") {
                 match &field.ty {
-                    Type::Array(_) => abort_call_site!(
-                        "Arrays need to be boxed to avoid unintended copies of the secret"
-                    ),
+                    Type::Array(_) => {
+                        return Err(syn::Error::new_spanned(
+                            field,
+                            "Arrays need to be boxed to avoid unintended copies of the secret",
+                        ))
+                    }
                     Type::Path(_) => {}
                     _ => {
-                        abort_call_site!("Type {} does not support being decoded as a secret value")
+                        return Err(syn::Error::new_spanned(
+                            field,
+                            "Type does not support being decoded as a secret value",
+                        ))
                     }
                 }
             }
         }
     }
+    Ok(())
 }
 
 /// Derive an `Decode` implementation for a struct or enum.
-#[proc_macro_error]
 #[proc_macro_derive(Decode, attributes(secret))]
 pub fn derive_decode(input: TokenStream) -> TokenStream {
     let mut input = parse_macro_input!(input as DeriveInput);
@@ -170,7 +181,9 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
             fields: Fields::Named(FieldsNamed { named, .. }),
             ..
         }) => {
-            check_if_boxed(&named);
+            if let Err(err) = check_if_boxed(&named) {
+                return err.to_compile_error().into();
+            }
 
             let names = named.iter().map(|f| &f.ident);
             let field_types = named.iter().map(|f| &f.ty);
@@ -189,7 +202,9 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
             fields: Fields::Unnamed(FieldsUnnamed { unnamed, .. }),
             ..
         }) => {
-            check_if_boxed(&unnamed);
+            if let Err(err) = check_if_boxed(&unnamed) {
+                return err.to_compile_error().into();
+            }
 
             let field_types = unnamed.iter().map(|f| &f.ty);
 
@@ -224,6 +239,13 @@ pub fn derive_decode(input: TokenStream) -> TokenStream {
                 }
             }
         }
-        _ => abort_call_site!("`#[derive(Encode)` only supports non-tuple structs"),
+        _ => {
+            return syn::Error::new_spanned(
+                name,
+                "`#[derive(Decode)]` only supports structs and enums",
+            )
+            .to_compile_error()
+            .into()
+        }
     }.into()
 }

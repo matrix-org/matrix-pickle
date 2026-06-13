@@ -124,7 +124,6 @@ name = "matrix-pickle-derive"
 version = "0.2.2"
 dependencies = [
  "proc-macro-crate",
- "proc-macro-error3",
  "proc-macro2",
  "quote",
  "syn",
@@ -167,27 +166,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "219cb19e96be00ab2e37d6e299658a0cfa83e52429179969b0f0121b4ac46983"
 dependencies = [
  "toml_edit",
-]
-
-[[package]]
-name = "proc-macro-error-attr3"
-version = "3.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34e4dd828515431dd6c4a030d26f7eaed7dd4778226e9d2bb968d65ca4ec3d4d"
-dependencies = [
- "proc-macro2",
- "quote",
-]
-
-[[package]]
-name = "proc-macro-error3"
-version = "3.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ee475e440453418ff1335189eddf7101ba502cd818ab7ae04209bc83aa925aa"
-dependencies = [
- "proc-macro-error-attr3",
- "proc-macro2",
- "quote",
 ]
 
 [[package]]
