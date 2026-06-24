@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - xxxx-xx-xx
+
+- Use `syn::Error` instead of the `proc-macro-error` crate.
+  ([#24](https://github.com/matrix-org/matrix-pickle/pull/24))
+
 ## [0.2.2] - 2025-11-04
 
 ### 🐛 Bug Fixes
