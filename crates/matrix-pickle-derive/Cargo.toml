@@ -11,7 +11,7 @@ rust-version = { workspace = true }
 proc-macro = true
 
 [dependencies]
-proc-macro2 = { version = "1.0.103", default-features = false }
-proc-macro-crate = { version = "3.4.0", default-features = false }
-quote = { version = "1.0.41", default-features = false }
-syn = { version = "2.0.108", default-features = false,  features = ["derive", "parsing", "printing", "proc-macro"] }
+proc-macro2 = { version = "1.0.107", default-features = false }
+proc-macro-crate = { version = "3.5.0", default-features = false }
+quote = { version = "1.0.47", default-features = false }
+syn = { version = "3.0.3", default-features = false,  features = ["derive", "parsing", "printing", "proc-macro"] }
